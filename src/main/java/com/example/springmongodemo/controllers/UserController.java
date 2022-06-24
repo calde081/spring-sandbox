@@ -2,7 +2,7 @@ package com.example.springmongodemo.controllers;
 
 import com.example.springmongodemo.models.User;
 import com.example.springmongodemo.payload.UserRequest;
-import com.example.springmongodemo.respository.UserRepo;
+import com.example.springmongodemo.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,23 +17,50 @@ public class UserController {
 
 
 
-
     @PostMapping("/user")
-    public ResponseEntity<?> postPost(@RequestBody UserRequest newPostUserRequest) {
-        User newUser = new User(newPostUserRequest.getUserName(), newPostUserRequest.getBio());
+    public ResponseEntity<?> createUser(@RequestBody UserRequest newPostUserRequest) {
+        User newUser = new User(newPostUserRequest.getUsername(), newPostUserRequest.getBio());
         userRepository.save(newUser);
         return ResponseEntity.ok("Post created successfully!");
     }
 
-
     @GetMapping("/user")
     public String getUser(@RequestParam String username) {
-        if(userRepository.findByUsername(username).isPresent()) {
+        if(userRepository.existsByUsername(username)) {
             User user = userRepository.findByUsername(username).get();
             String userBio = user.getUsername() + " " + user.getBio();
             return userBio;
         }
         return null;
+    }
+
+    @PutMapping("/user")
+    public ResponseEntity<?> updateUser(@RequestBody UserRequest newPutUserRequest)
+    {
+        String username = newPutUserRequest.getUsername();
+        if (userRepository.existsByUsername(username))
+        {
+            User user = userRepository.findByUsername(username).get();
+            user.setBio(newPutUserRequest.getBio());
+            userRepository.save(user);
+            return ResponseEntity.ok("User updated successfully!");
+        }
+        else
+            return ResponseEntity.ok("User not found.");
+    }
+
+    @DeleteMapping("/user")
+    public ResponseEntity<?> deleteUser(@RequestBody UserRequest newDeleteUserRequest)
+    {
+        String username = newDeleteUserRequest.getUsername();
+        if (userRepository.existsByUsername(username))
+        {
+            User user = userRepository.findByUsername(username).get();
+            userRepository.delete(user);
+            return ResponseEntity.ok("User deleted successfully!");
+        }
+        else
+            return ResponseEntity.ok("User not found.");
     }
 
     @GetMapping("/test")
