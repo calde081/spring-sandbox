@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/")
@@ -16,10 +18,9 @@ public class UserController {
     UserRepo userRepository;
 
 
-
-    @PostMapping("/user")
+    @PostMapping("/linkGen")
     public ResponseEntity<?> createUser(@RequestBody UserRequest newPostUserRequest) {
-        User newUser = new User(newPostUserRequest.getUsername(), newPostUserRequest.getBio());
+        User newUser = new User(newPostUserRequest.getUsername(), newPostUserRequest.getLink());
         userRepository.save(newUser);
         return ResponseEntity.ok("Post created successfully!");
     }
@@ -28,7 +29,7 @@ public class UserController {
     public String getUser(@RequestParam String username) {
         if(userRepository.existsByUsername(username)) {
             User user = userRepository.findByUsername(username).get();
-            String userBio = user.getUsername() + " " + user.getBio();
+            String userBio = user.getUsername() + " " + user.getLink();
             return userBio;
         }
         return null;
@@ -41,7 +42,7 @@ public class UserController {
         if (userRepository.existsByUsername(username))
         {
             User user = userRepository.findByUsername(username).get();
-            user.setBio(newPutUserRequest.getBio());
+            user.setLink(newPutUserRequest.getLink());
             userRepository.save(user);
             return ResponseEntity.ok("User updated successfully!");
         }
@@ -61,6 +62,11 @@ public class UserController {
         }
         else
             return ResponseEntity.ok("User not found.");
+    }
+
+    @GetMapping("/users")
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 
     @GetMapping("/test")

@@ -12,14 +12,14 @@ public class User {
     @Id
     private String username;
 
-    private String bio;
+    private String link;
 
     public User() {
     }
 
-    public User(String username, String bio) {
+    public User(String username, String link) {
         this.username = username;
-        this.bio = bio;
+        this.link = link;
     }
 
     public String getUsername() {
@@ -30,11 +30,9 @@ public class User {
         this.username = username;
     }
 
-    public String getBio() {
-        return bio;
+    public String getLink() {
+        return link;
     }
 
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
+    public void setLink(String bio) {this.link = link;}
 }
